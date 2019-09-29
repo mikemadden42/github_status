@@ -7,37 +7,57 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
-	"time"
 )
 
-type messages []struct {
-	Status    string    `json:"status"`
-	Body      string    `json:"body"`
-	CreatedOn time.Time `json:"created_on"`
+type summary struct {
+	Components []struct {
+		CreatedAt          string      `json:"created_at"`
+		Description        string      `json:"description"`
+		Group              bool        `json:"group"`
+		GroupID            interface{} `json:"group_id"`
+		ID                 string      `json:"id"`
+		Name               string      `json:"name"`
+		OnlyShowIfDegraded bool        `json:"only_show_if_degraded"`
+		PageID             string      `json:"page_id"`
+		Position           int64       `json:"position"`
+		Showcase           bool        `json:"showcase"`
+		Status             string      `json:"status"`
+		UpdatedAt          string      `json:"updated_at"`
+	} `json:"components"`
+	Incidents []interface{} `json:"incidents"`
+	Page      struct {
+		ID        string `json:"id"`
+		Name      string `json:"name"`
+		TimeZone  string `json:"time_zone"`
+		UpdatedAt string `json:"updated_at"`
+		URL       string `json:"url"`
+	} `json:"page"`
+	ScheduledMaintenances []interface{} `json:"scheduled_maintenances"`
+	Status                struct {
+		Description string `json:"description"`
+		Indicator   string `json:"indicator"`
+	} `json:"status"`
 }
 
 func main() {
-	response, err := http.Get("https://status.github.com/api/messages.json")
-	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
-	}
+	response, err := http.Get("https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json")
+	checkErr(err)
 
 	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
+	checkErr(err)
+
+	var responseObject summary
+	err = json.Unmarshal(responseData, &responseObject)
+	checkErr(err)
+
+	for _, component := range responseObject.Components {
+		fmt.Printf("%-60s %s\n", component.Name, component.Status)
 	}
+}
 
-	var responseObject messages
-	json.Unmarshal(responseData, &responseObject)
-
-	for _, message := range responseObject {
-		fmt.Printf("%s - %s\n%s\n\n",
-			message.CreatedOn,
-			message.Status,
-			message.Body)
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
 	}
 }
