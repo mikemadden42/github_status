@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/fatih/color"
 )
 
 type summary struct {
@@ -52,8 +54,16 @@ func main() {
 	checkErr(err)
 
 	for _, component := range responseObject.Components {
-		fmt.Printf("%-60s %s\n", component.Name, component.Status)
+		fmt.Printf("%-60s", component.Name)
+		if component.Status == "operational" {
+			color.Set(color.FgGreen)
+		} else {
+			color.Set(color.FgYellow)
+		}
+		fmt.Printf("%s\n", component.Status)
+		color.Unset()
 	}
+
 }
 
 func checkErr(err error) {
