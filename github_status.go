@@ -57,6 +57,8 @@ func main() {
 		fmt.Printf("%-60s", component.Name)
 		if component.Status == "operational" {
 			color.Set(color.FgGreen)
+		} else if component.Status == "major_outage" {
+			color.Set(color.FgRed)
 		} else {
 			color.Set(color.FgYellow)
 		}
