@@ -6,7 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/fatih/color"
@@ -46,7 +46,7 @@ func main() {
 	response, err := http.Get("https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json")
 	checkErr(err)
 
-	responseData, err := ioutil.ReadAll(response.Body)
+	responseData, err := io.ReadAll(response.Body)
 	checkErr(err)
 
 	var responseObject summary
