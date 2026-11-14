@@ -37,8 +37,8 @@
 - [ ] Split into `fetch(url)` and `render(w io.Writer, summary)`; test `render`
       with a JSON fixture and `fetch` with `httptest.NewServer`
 - [ ] Add a lint job (`golangci/golangci-lint-action`) to CI
-- [ ] Align Go versions: `go.mod` says 1.18, CI tests 1.23–1.25. Pick a floor
-      and test through current
+- [x] CI targets Go `oldstable` and `stable` (via `actions/setup-go` aliases)
+- [ ] `go.mod` still says `go 1.18`, which CI no longer tests; consider raising it
 - [ ] Bump `actions/setup-go` / `actions/checkout`
 - [ ] Update dependencies (`go get -u ./... && go mod tidy`); `x/sys` v0.25.0 → v0.50.0,
       `fatih/color` v1.18.0 → v1.19.0
