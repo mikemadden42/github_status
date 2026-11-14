@@ -117,3 +117,25 @@ func TestStatusColor(t *testing.T) {
 		}
 	}
 }
+
+func TestOperational(t *testing.T) {
+	s, err := fetch(serveFixture(t).URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if operational(s) {
+		t.Error("fixture has an outage, want operational false")
+	}
+
+	for i := range s.Components {
+		s.Components[i].Status = "operational"
+	}
+	if !operational(s) {
+		t.Error("all components operational, want operational true")
+	}
+
+	s.Components[2].Status = "major_outage" // the non-showcase filler row
+	if !operational(s) {
+		t.Error("only a non-showcase component is down, want operational true")
+	}
+}

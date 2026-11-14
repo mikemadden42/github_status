@@ -30,7 +30,7 @@
 - [x] Use `json.NewDecoder(resp.Body).Decode` instead of `io.ReadAll` + `Unmarshal`
 - [x] Use the readable URL `https://www.githubstatus.com/api/v2/summary.json`
 - [x] Add a package comment (revive)
-- [ ] Exit non-zero when any component isn't operational
+- [x] Exit non-zero when any component isn't operational (with `-check`)
 
 ## Tests / CI
 
@@ -45,7 +45,7 @@
 
 ## Housekeeping
 
-- [ ] Delete the Jenkinsfile unless Jenkins is in use (build-only, no tests, echo-only post blocks)
-- [ ] `make release` uses `--snapshot`, so it never publishes. Rename the target or drop the flag
-- [ ] Add `dist/` and `github_status` to `.gitignore`
-- [ ] Expand the README with usage, install and example output
+- [x] Delete the Jenkinsfile unless Jenkins is in use (build-only, no tests, echo-only post blocks)
+- [x] `make release` uses `--snapshot`, so it never publishes. Renamed to `make snapshot`
+- [x] Add `dist/` and `github_status` to `.gitignore`
+- [x] Expand the README with usage, install and example output
