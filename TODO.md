@@ -9,10 +9,10 @@
   - [x] `linters-settings` should be `linters.settings`
   - [x] goimports settings go under `formatters.settings.goimports.local-prefixes` (list)
   - [x] `issues.exclude-dirs` should be `linters.exclusions.paths`
-- [ ] Fix `.goreleaser.yaml`. It fails `goreleaser check`:
-  - [ ] Add `version: 2`
-  - [ ] `snapshot.name_template` should be `snapshot.version_template`
-  - [ ] Remove the no-op `go generate ./...` hook
+- [x] Fix `.goreleaser.yaml`. It fails `goreleaser check`:
+  - [x] Add `version: 2`
+  - [x] `snapshot.name_template` should be `snapshot.version_template`
+  - [x] Remove the no-op `go generate ./...` hook
 - [x] HTTP handling in `github_status.go`:
   - [x] Use an `http.Client` with a timeout instead of `http.Get`
   - [x] Close `response.Body`
@@ -36,11 +36,11 @@
 
 - [x] Split into `fetch(url)` and `render(w io.Writer, summary)`; test `render`
       with a JSON fixture and `fetch` with `httptest.NewServer`
-- [ ] Add a lint job (`golangci/golangci-lint-action`) to CI
+- [x] Add a lint job (`golangci/golangci-lint-action`) to CI
 - [x] CI targets Go `oldstable` and `stable` (via `actions/setup-go` aliases)
 - [x] Raise `go.mod` to `go 1.26` to match the oldest Go version CI tests
-- [ ] Bump `actions/setup-go` / `actions/checkout`
-- [ ] Update dependencies (`go get -u ./... && go mod tidy`); `x/sys` v0.25.0 → v0.50.0,
+- [x] Bump `actions/setup-go` / `actions/checkout`
+- [x] Update dependencies (`go get -u ./... && go mod tidy`); `x/sys` v0.25.0 → v0.50.0,
       `fatih/color` v1.18.0 → v1.19.0
 
 ## Housekeeping
