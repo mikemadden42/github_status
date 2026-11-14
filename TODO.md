@@ -38,7 +38,7 @@
       with a JSON fixture and `fetch` with `httptest.NewServer`
 - [ ] Add a lint job (`golangci/golangci-lint-action`) to CI
 - [x] CI targets Go `oldstable` and `stable` (via `actions/setup-go` aliases)
-- [ ] `go.mod` still says `go 1.18`, which CI no longer tests; consider raising it
+- [x] Raise `go.mod` to `go 1.26` to match the oldest Go version CI tests
 - [ ] Bump `actions/setup-go` / `actions/checkout`
 - [ ] Update dependencies (`go get -u ./... && go mod tidy`); `x/sys` v0.25.0 → v0.50.0,
       `fatih/color` v1.18.0 → v1.19.0
