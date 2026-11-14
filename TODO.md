@@ -30,7 +30,7 @@
 - [x] Use `json.NewDecoder(resp.Body).Decode` instead of `io.ReadAll` + `Unmarshal`
 - [x] Use the readable URL `https://www.githubstatus.com/api/v2/summary.json`
 - [x] Add a package comment (revive)
-- [ ] Exit non-zero when any component isn't operational
+- [x] Exit non-zero when any component isn't operational (with `-check`)
 
 ## Tests / CI
 

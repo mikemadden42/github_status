@@ -6,6 +6,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,9 +30,16 @@ type summary struct {
 const summaryURL = "https://www.githubstatus.com/api/v2/summary.json"
 
 func main() {
+	check := flag.Bool("check", false, "exit with status 1 if any component is not operational")
+	flag.Parse()
+
 	s, err := fetch(summaryURL)
 	checkErr(err)
 	checkErr(render(os.Stdout, s))
+
+	if *check && !operational(s) {
+		os.Exit(1)
+	}
 }
 
 // fetch retrieves and decodes the status page summary at url.
@@ -74,6 +82,17 @@ func render(w io.Writer, s summary) error {
 		}
 	}
 	return nil
+}
+
+// operational reports whether every component shown on the status page is
+// operational.
+func operational(s summary) bool {
+	for _, component := range s.Components {
+		if component.Showcase && component.Status != "operational" {
+			return false
+		}
+	}
+	return true
 }
 
 // statusColor returns the color used to display a component status.
