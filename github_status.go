@@ -17,35 +17,16 @@ import (
 
 type summary struct {
 	Components []struct {
-		CreatedAt          string      `json:"created_at"`
-		Description        string      `json:"description"`
-		Group              bool        `json:"group"`
-		GroupID            interface{} `json:"group_id"`
-		ID                 string      `json:"id"`
-		Name               string      `json:"name"`
-		OnlyShowIfDegraded bool        `json:"only_show_if_degraded"`
-		PageID             string      `json:"page_id"`
-		Position           int64       `json:"position"`
-		Showcase           bool        `json:"showcase"`
-		Status             string      `json:"status"`
-		UpdatedAt          string      `json:"updated_at"`
+		Name     string `json:"name"`
+		Status   string `json:"status"`
+		Showcase bool   `json:"showcase"`
 	} `json:"components"`
-	Incidents []interface{} `json:"incidents"`
-	Page      struct {
-		ID        string `json:"id"`
-		Name      string `json:"name"`
-		TimeZone  string `json:"time_zone"`
-		UpdatedAt string `json:"updated_at"`
-		URL       string `json:"url"`
-	} `json:"page"`
-	ScheduledMaintenances []interface{} `json:"scheduled_maintenances"`
-	Status                struct {
+	Status struct {
 		Description string `json:"description"`
-		Indicator   string `json:"indicator"`
 	} `json:"status"`
 }
 
-const summaryURL = "https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json"
+const summaryURL = "https://www.githubstatus.com/api/v2/summary.json"
 
 func main() {
 	s, err := fetch(summaryURL)
@@ -74,23 +55,41 @@ func fetch(url string) (summary, error) {
 	return s, nil
 }
 
-// render writes one line per component to w, with the status colorized.
+// render writes the overall status followed by one line per component to w,
+// with each component status colorized. Components not shown on the status
+// page (showcase false) are skipped.
 func render(w io.Writer, s summary) error {
+	if _, err := fmt.Fprintf(w, "%s\n\n", s.Status.Description); err != nil {
+		return err
+	}
 	for _, component := range s.Components {
-		c := color.New(color.FgYellow)
-		if component.Status == "operational" {
-			c = color.New(color.FgGreen)
-		} else if component.Status == "major_outage" {
-			c = color.New(color.FgRed)
+		if !component.Showcase {
+			continue
 		}
 		if _, err := fmt.Fprintf(w, "%-60s", component.Name); err != nil {
 			return err
 		}
-		if _, err := c.Fprintln(w, component.Status); err != nil {
+		if _, err := statusColor(component.Status).Fprintln(w, component.Status); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// statusColor returns the color used to display a component status.
+func statusColor(status string) *color.Color {
+	switch status {
+	case "operational":
+		return color.New(color.FgGreen)
+	case "degraded_performance", "partial_outage":
+		return color.New(color.FgYellow)
+	case "major_outage":
+		return color.New(color.FgRed)
+	case "under_maintenance":
+		return color.New(color.FgBlue)
+	default:
+		return color.New(color.FgYellow)
+	}
 }
 
 func checkErr(err error) {

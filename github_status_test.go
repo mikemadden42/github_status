@@ -37,8 +37,8 @@ func TestFetch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("fetch: %v", err)
 	}
-	if got := len(s.Components); got != 3 {
-		t.Fatalf("got %d components, want 3", got)
+	if got := len(s.Components); got != 4 {
+		t.Fatalf("got %d components, want 4", got)
 	}
 	if got := s.Status.Description; got != "Partial System Outage" {
 		t.Errorf("status description = %q", got)
@@ -90,11 +90,30 @@ func TestRender(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := fmt.Sprintf("%-60s%s\n%-60s%s\n%-60s%s\n",
+	want := fmt.Sprintf("Partial System Outage\n\n%-60s%s\n%-60s%s\n%-60s%s\n",
 		"Git Operations", "operational",
 		"Actions", "major_outage",
 		"Pages", "degraded_performance")
 	if got := buf.String(); got != want {
 		t.Errorf("render output mismatch\ngot:\n%s\nwant:\n%s", got, want)
+	}
+}
+
+func TestStatusColor(t *testing.T) {
+	tests := []struct {
+		status string
+		want   color.Attribute
+	}{
+		{"operational", color.FgGreen},
+		{"degraded_performance", color.FgYellow},
+		{"partial_outage", color.FgYellow},
+		{"major_outage", color.FgRed},
+		{"under_maintenance", color.FgBlue},
+		{"something_new", color.FgYellow},
+	}
+	for _, tt := range tests {
+		if !statusColor(tt.status).Equals(color.New(tt.want)) {
+			t.Errorf("statusColor(%q) is not %v", tt.status, tt.want)
+		}
 	}
 }
