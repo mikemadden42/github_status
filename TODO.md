@@ -34,7 +34,7 @@
 
 ## Tests / CI
 
-- [ ] Split into `fetch(url)` and `render(w io.Writer, summary)`; test `render`
+- [x] Split into `fetch(url)` and `render(w io.Writer, summary)`; test `render`
       with a JSON fixture and `fetch` with `httptest.NewServer`
 - [ ] Add a lint job (`golangci/golangci-lint-action`) to CI
 - [x] CI targets Go `oldstable` and `stable` (via `actions/setup-go` aliases)

@@ -7,6 +7,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -44,33 +45,52 @@ type summary struct {
 	} `json:"status"`
 }
 
+const summaryURL = "https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json"
+
 func main() {
-	client := &http.Client{Timeout: 10 * time.Second}
-	response, err := client.Get("https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json")
+	s, err := fetch(summaryURL)
 	checkErr(err)
+	checkErr(render(os.Stdout, s))
+}
+
+// fetch retrieves and decodes the status page summary at url.
+func fetch(url string) (summary, error) {
+	var s summary
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	response, err := client.Get(url)
+	if err != nil {
+		return s, err
+	}
 	defer func() { _ = response.Body.Close() }()
 
 	if response.StatusCode != http.StatusOK {
-		checkErr(fmt.Errorf("unexpected HTTP status: %s", response.Status))
+		return s, fmt.Errorf("unexpected HTTP status: %s", response.Status)
 	}
 
-	var responseObject summary
-	err = json.NewDecoder(response.Body).Decode(&responseObject)
-	checkErr(err)
+	if err := json.NewDecoder(response.Body).Decode(&s); err != nil {
+		return s, fmt.Errorf("decoding summary: %w", err)
+	}
+	return s, nil
+}
 
-	for _, component := range responseObject.Components {
-		fmt.Printf("%-60s", component.Name)
+// render writes one line per component to w, with the status colorized.
+func render(w io.Writer, s summary) error {
+	for _, component := range s.Components {
+		c := color.New(color.FgYellow)
 		if component.Status == "operational" {
-			color.Set(color.FgGreen)
+			c = color.New(color.FgGreen)
 		} else if component.Status == "major_outage" {
-			color.Set(color.FgRed)
-		} else {
-			color.Set(color.FgYellow)
+			c = color.New(color.FgRed)
 		}
-		fmt.Printf("%s\n", component.Status)
-		color.Unset()
+		if _, err := fmt.Fprintf(w, "%-60s", component.Name); err != nil {
+			return err
+		}
+		if _, err := c.Fprintln(w, component.Status); err != nil {
+			return err
+		}
 	}
-
+	return nil
 }
 
 func checkErr(err error) {
