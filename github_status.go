@@ -1,3 +1,4 @@
+// Command github_status prints the status of each GitHub component.
 package main
 
 // https://tutorialedge.net/golang/consuming-restful-api-with-go/
@@ -6,8 +7,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -43,14 +45,17 @@ type summary struct {
 }
 
 func main() {
-	response, err := http.Get("https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json")
+	client := &http.Client{Timeout: 10 * time.Second}
+	response, err := client.Get("https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json")
 	checkErr(err)
+	defer func() { _ = response.Body.Close() }()
 
-	responseData, err := io.ReadAll(response.Body)
-	checkErr(err)
+	if response.StatusCode != http.StatusOK {
+		checkErr(fmt.Errorf("unexpected HTTP status: %s", response.Status))
+	}
 
 	var responseObject summary
-	err = json.Unmarshal(responseData, &responseObject)
+	err = json.NewDecoder(response.Body).Decode(&responseObject)
 	checkErr(err)
 
 	for _, component := range responseObject.Components {
@@ -70,6 +75,7 @@ func main() {
 
 func checkErr(err error) {
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, "error:", err)
+		os.Exit(1)
 	}
 }
