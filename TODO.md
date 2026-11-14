@@ -21,14 +21,14 @@
 
 ## Code quality
 
-- [ ] Trim the `summary` struct to the fields actually used; `interface{}` should be `any`
-- [ ] Print the overall status (`Status.Description`)
-- [ ] Replace the if/else chain with a `switch` (staticcheck QF1003) covering
+- [x] Trim the `summary` struct to the fields actually used; `interface{}` should be `any`
+- [x] Print the overall status (`Status.Description`)
+- [x] Replace the if/else chain with a `switch` (staticcheck QF1003) covering
       `operational`, `degraded_performance`, `partial_outage`, `major_outage`,
       `under_maintenance`
-- [ ] Filter the "Visit www.githubstatus.com for more information" filler row
+- [x] Filter the "Visit www.githubstatus.com for more information" filler row
 - [x] Use `json.NewDecoder(resp.Body).Decode` instead of `io.ReadAll` + `Unmarshal`
-- [ ] Use the readable URL `https://www.githubstatus.com/api/v2/summary.json`
+- [x] Use the readable URL `https://www.githubstatus.com/api/v2/summary.json`
 - [x] Add a package comment (revive)
 - [ ] Exit non-zero when any component isn't operational
 
