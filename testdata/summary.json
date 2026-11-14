@@ -1,0 +1,17 @@
+{
+  "page": {
+    "id": "kctbh9vrtdwd",
+    "name": "GitHub",
+    "url": "https://www.githubstatus.com",
+    "time_zone": "Etc/UTC",
+    "updated_at": "2026-11-14T12:00:00.000Z"
+  },
+  "components": [
+    {"id": "1", "name": "Git Operations", "status": "operational", "group": false, "position": 1},
+    {"id": "2", "name": "Actions", "status": "major_outage", "group": false, "position": 2},
+    {"id": "3", "name": "Pages", "status": "degraded_performance", "group": false, "position": 3}
+  ],
+  "incidents": [],
+  "scheduled_maintenances": [],
+  "status": {"indicator": "major", "description": "Partial System Outage"}
+}
